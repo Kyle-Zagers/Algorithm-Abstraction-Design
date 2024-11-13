@@ -12,26 +12,26 @@
 using namespace std;
 
 std::tuple<int, int, std::vector<int>> program4(int n, int W, std::vector<int> heights, std::vector<int> widths){
-    vector<int> opt(n+1, INT_MAX);
-    vector<int> platformStart(n+1, 0);
-    opt[0] = 0;
+    vector<int> opt(n+1, INT_MAX); // stores the optimal height for the first i paintings
+    vector<int> platformStart(n+1, 0); // stores the starting index of the platform for the ith painting
+    opt[0] = 0; // the optimal height for 0 paintings is 0
 
-    for (int i = 1; i <= n; i++){
-        for (int j = i; j > 0; j--) {
-            int width = 0;
-            int maxHeight = 0;
+    for (int i = 1; i <= n; i++){ // loop through the paintings
+        for (int j = i; j > 0; j--) { // loop through the paintings from i to 1
+            int width = 0; // the total width of the paintings from j to i
+            int maxHeight = 0; // the maximum height of the paintings from j to i
 
-            for (int k = j; k <= i; k++) {
-                width += widths[k-1];
-                if (width > W) {
+            for (int k = j; k <= i; k++) { // loop through the paintings from j to i
+                width += widths[k-1]; // add the width of the kth painting
+                if (width > W) { // if the width exceeds W, break
                     break;
                 }
-                maxHeight = max(maxHeight, heights[k-1]);
+                maxHeight = max(maxHeight, heights[k-1]); // else update the maximum height
             }
 
-            if (width <= W) {
-                opt[i] = min(opt[i], opt[j-1] + maxHeight);
-                if (opt[i] == opt[j-1] + maxHeight) {
+            if (width <= W) { // if the width does not exceed W
+                opt[i] = min(opt[i], opt[j-1] + maxHeight); // update the optimal height
+                if (opt[i] == opt[j-1] + maxHeight) { // if the optimal height is updated, then update the starting index of the platform for the ith painting
                     platformStart[i] = j;
                 }
             }
@@ -41,16 +41,15 @@ std::tuple<int, int, std::vector<int>> program4(int n, int W, std::vector<int> h
     int numPlatforms = 0;
     vector<int> platformSizes;
 
-    for(int i = n; i > 0; i = platformStart[i]-1){
-        numPlatforms++;
-        platformSizes.push_back(i - platformStart[i] + 1);
+    for (int i = 1; i <= n; i++) { // loop through the painting's platform starting indices
+        if (platformStart[i] != platformStart[i-1]) { // if the starting index of the platform for the ith painting is different from the starting index of the platform for the (i-1)th painting, increment the number of platforms
+            numPlatforms++;
+            platformSizes.push_back(0);
+        }
+        platformSizes[platformSizes.size()-1]++; // increment the number of paintings on the current platform
     }
-    reverse(platformSizes.begin(), platformSizes.end());
 
     return std::make_tuple(numPlatforms, opt[n], platformSizes);
-
-//    return std::make_tuple(0, 0, std::vector<int>()); // replace with your own result.
-    // return std::make_tuple(n, 0, heights);
 }
 int main(){
     int n, W;
