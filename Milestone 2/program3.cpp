@@ -3,6 +3,7 @@
 #include <tuple>
 #include <cmath>
 #include <bitset>
+#include <climits>
 /* Solution to program 3
 * @param n the number of paintings
 * @param W the maximum width of the platform

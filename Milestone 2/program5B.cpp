@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
+#include <climits>
 /* Solution to program 5B
 * @param n the number of paintings
 * @param W the maximum width of the platform
@@ -39,15 +40,13 @@ std::tuple<int, int, std::vector<int>> program5B(int n, int W, std::vector<int> 
 
     int numPlatforms = 0;
     vector<int> platformSizes;
-
-    for (int i = 1; i <= n; i++) { // loop through the painting's platform starting indices
-        if (platformStart[i] != platformStart[i-1]) { // if the starting index of the platform for the ith painting is different from the starting index of the platform for the (i-1)th painting, increment the number of platforms
-            numPlatforms++;
-            platformSizes.push_back(0);
-        }
-        platformSizes[platformSizes.size()-1]++; // increment the number of paintings on the current platform
+    // loop backwards through the platform starting indices by going to the starting index of the current platform - 1
+    // skips paintings between platforms that may have incorrect starting indices
+    for (int i = n; i > 0; i = platformStart[i] - 1) {
+        numPlatforms++;
+        platformSizes.insert(platformSizes.begin(), i - platformStart[i] + 1); // inserts at the beginning because we are going backwards
     }
-
+    
     return std::make_tuple(numPlatforms, opt[n], platformSizes);
 }
 
